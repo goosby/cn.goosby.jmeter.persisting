@@ -32,7 +32,6 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
 	private static String mongodb_name;
 	
 	static{
-
 		mongo_host = JMeterUtils.getProperty("mongo_host");
 		mongo_port = JMeterUtils.getProperty("mongo_port");
 		mongodb_name = JMeterUtils.getProperty("mongodb_name");
