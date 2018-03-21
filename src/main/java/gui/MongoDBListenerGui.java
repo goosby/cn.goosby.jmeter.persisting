@@ -4,6 +4,7 @@ import listener.MongoDBListener;
 import org.apache.jmeter.samplers.Clearable;
 import org.apache.jmeter.testelement.TestElement;
 import org.apache.jmeter.visualizers.gui.AbstractListenerGui;
+import utils.ExtraValues;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,12 +13,14 @@ import java.awt.*;
 public class MongoDBListenerGui extends AbstractListenerGui implements Clearable {
 
 	private static final long serialVersionUID = 2520871146574605319L;
-	private static final String TAB = "Persisting Sampler to MongoDB";
+
 
 	private JTextField mongodbhost;//mongodb 连接地址
+	private JTextField mogodbPort;
 	private JTextField testcase;
 
 	public MongoDBListenerGui(){
+		super();
 		init();
 	}
 	
@@ -27,19 +30,22 @@ public class MongoDBListenerGui extends AbstractListenerGui implements Clearable
 		Box box = Box.createVerticalBox();
 		box.add(makeTitlePanel());
 		box.add(createMongoHostsPanel());
+		box.add(createMongoPortPanel());
 		box.add(createTestCasePanel());
 		add(box,BorderLayout.NORTH);
 	}
 	
 	@Override
 	public String getStaticLabel() {
-		return TAB;
+		return ExtraValues.VIEW_TAB;
 	}
 	
 	@Override
     public void configure(TestElement element) {
         super.configure(element);
-
+		mongodbhost.setText(element.getPropertyAsString(ExtraValues.MONGO_HOST));
+		mogodbPort.setText(element.getPropertyAsString(ExtraValues.MONGO_PORT));
+		testcase.setText(element.getPropertyAsString(ExtraValues.TEST_CASE));
     }
 	
 	@Override
@@ -59,21 +65,22 @@ public class MongoDBListenerGui extends AbstractListenerGui implements Clearable
 	public void modifyTestElement(TestElement element) {
 
 		super.configureTestElement(element);
-		element.setProperty("mongodb_host",mongodbhost.getText());
-		element.setProperty("test_case",testcase.getText());
+		element.setProperty(ExtraValues.MONGO_HOST,mongodbhost.getText());
+		element.setProperty(ExtraValues.MONGO_PORT,mogodbPort.getText());
+		element.setProperty(ExtraValues.TEST_CASE,testcase.getText());
 	}
 
 	@Override
 	public void clearData() {
 
-		super.clearGui();
-
 	}
+
 	@Override
     public void clearGui() {
 
 		super.clearGui();
 		mongodbhost.setText("");
+		mogodbPort.setText("");
 		testcase.setText("");
     }
 
@@ -88,7 +95,16 @@ public class MongoDBListenerGui extends AbstractListenerGui implements Clearable
 		hostsPanel.add(mongodbhost, BorderLayout.CENTER);
 		return hostsPanel;
 	}
-
+	private JPanel createMongoPortPanel(){
+		JLabel label = new JLabel("mongodb port: ");
+		mogodbPort = new JTextField();
+		mogodbPort.setName("Mongo_ports");
+		label.setLabelFor(mogodbPort);
+		JPanel testcasePanel = new JPanel(new BorderLayout());
+		testcasePanel.add(label, BorderLayout.WEST);
+		testcasePanel.add(mogodbPort, BorderLayout.CENTER);
+		return testcasePanel;
+	}
 	private JPanel createTestCasePanel(){
 		JLabel label = new JLabel("Test case: ");
 		testcase = new JTextField();

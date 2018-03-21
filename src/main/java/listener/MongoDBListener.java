@@ -5,9 +5,9 @@ import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleListener;
 import org.apache.jmeter.testelement.AbstractTestElement;
 import org.apache.jmeter.testelement.TestStateListener;
-import org.apache.jmeter.util.JMeterUtils;
-import org.apache.jorphan.logging.LoggingManager;
-import org.apache.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import utils.ExtraValues;
 import utils.MongoResultUtil;
 
 import java.io.Serializable;
@@ -20,21 +20,19 @@ import java.util.Date;
  *
  */
 public class MongoDBListener extends AbstractTestElement implements Serializable, SampleListener,TestStateListener {
-	
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LoggingManager.getLoggerForClass();
-	private static final SimpleDateFormat SFORMAT = new SimpleDateFormat("yyyyMMddHHmm");
-	//private static final SimpleDateFormat SFORMAT = new SimpleDateFormat("yyyyMMdd");
 
-	private static MongoClient mongoClient;
-	private static String mongodb_name;
+    private static final Logger log = LoggerFactory.getLogger(MongoDBListener.class);
+	private static final SimpleDateFormat SIMPLEDATEFORMAT = new SimpleDateFormat("yyyyMMddHHmm");
 
+
+	private MongoClient mongoClient;
+	private String currentTestTime;
 	
     @Override
 	public void sampleOccurred(SampleEvent event) {
 		BasicDBObject basicObject = MongoResultUtil.generateSampler(event);
-		DB db = mongoClient.getDB(mongodb_name);
-		DBCollection collection = db.getCollection(getTestCaseName());
+        DB db = mongoClient.getDB(ExtraValues.MONGODB_NAME);
+		DBCollection collection = db.getCollection(getTestCaseName()+"_"+currentTestTime);
 		collection.insert(basicObject);
 	}
 
@@ -53,32 +51,34 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
 
 	@Override
 	public void testStarted() {
-        mongodb_name = getTestCaseName()+ "_" + SFORMAT.format(new Date());
-        if(null == mongoClient){
+        currentTestTime = SIMPLEDATEFORMAT.format(new Date());
+        if(null == mongoClient) {
             try {
-                ServerAddress address = new ServerAddress(getMongoHost());
-                mongoClient = new MongoClient(address,getConfOptions());
+                ServerAddress address = new ServerAddress(getMongoHost(), getMongoPort());
+                mongoClient = new MongoClient(address, getConfOptions());
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
         }
+
 	}
 
 	@Override
 	public void testStarted(String host) {
-		
+        testStarted();
 	}
 
 	@Override
 	public void testEnded() {
         if(mongoClient != null){
             mongoClient.close();
+            mongoClient = null;
         }
 	}
 
 	@Override
 	public void testEnded(String host) {
-
+        testEnded();
 	}
 	
 	private static MongoClientOptions getConfOptions() {
@@ -94,10 +94,13 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
 	}
 
 	private String getMongoHost(){
-	    return getPropertyAsString("mongodb_host");
+	    return getPropertyAsString("mongo_host");
     }
     private String getTestCaseName(){
 	    return getPropertyAsString("test_case");
     }
 
+    private int getMongoPort(){
+        return getPropertyAsInt("mongo_port");
+    }
 }
