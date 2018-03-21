@@ -6,7 +6,7 @@
 
     <groupId>cn.goosby</groupId>
     <artifactId>jmeter-samplers-persisting</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <properties>

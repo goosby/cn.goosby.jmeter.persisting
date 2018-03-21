@@ -16,8 +16,8 @@ public class MongoDBListenerGui extends AbstractListenerGui implements Clearable
 
 
 	private JTextField mongodbhost;//mongodb 连接地址
-	private JTextField mogodbPort;
-	private JTextField testcase;
+	private JTextField mogodbPort; //mongod port
+	private JTextField testcase; //测试用例名称对应mongodb中的集合名称
 
 	public MongoDBListenerGui(){
 		super();

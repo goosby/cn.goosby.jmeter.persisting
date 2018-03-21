@@ -25,14 +25,13 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
 	private static final SimpleDateFormat SIMPLEDATEFORMAT = new SimpleDateFormat("yyyyMMddHHmm");
 
 
-	private MongoClient mongoClient;
-	private String currentTestTime;
+	private static MongoClient mongoClient;
+    private static DB db;
+    private static DBCollection collection;
 	
     @Override
 	public void sampleOccurred(SampleEvent event) {
-		BasicDBObject basicObject = MongoResultUtil.generateSampler(event);
-        DB db = mongoClient.getDB(ExtraValues.MONGODB_NAME);
-		DBCollection collection = db.getCollection(getTestCaseName()+"_"+currentTestTime);
+		BasicDBObject basicObject = MongoResultUtil.processSampler(event);
 		collection.insert(basicObject);
 	}
 
@@ -51,34 +50,32 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
 
 	@Override
 	public void testStarted() {
-        currentTestTime = SIMPLEDATEFORMAT.format(new Date());
-        if(null == mongoClient) {
-            try {
-                ServerAddress address = new ServerAddress(getMongoHost(), getMongoPort());
-                mongoClient = new MongoClient(address, getConfOptions());
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-        }
-
+        testStarted("");
 	}
 
 	@Override
 	public void testStarted(String host) {
-        testStarted();
-	}
+        try {
+            ServerAddress address = new ServerAddress(getMongoHost(), getMongoPort());
+            mongoClient = new MongoClient(address, getConfOptions());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        String currentTime = SIMPLEDATEFORMAT.format(new Date());
+        db = mongoClient.getDB(ExtraValues.DATABASE_NAME);
+        collection = db.getCollection(getTestCaseName()+"_"+currentTime);
+    }
 
 	@Override
 	public void testEnded() {
-        if(mongoClient != null){
-            mongoClient.close();
-            mongoClient = null;
-        }
+        testEnded("");
 	}
 
 	@Override
 	public void testEnded(String host) {
-        testEnded();
+        if(mongoClient != null){
+            mongoClient.close();
+        }
 	}
 	
 	private static MongoClientOptions getConfOptions() {

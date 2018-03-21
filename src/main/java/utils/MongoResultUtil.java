@@ -315,7 +315,7 @@ public final class MongoResultUtil {
     
     
 	@SuppressWarnings("deprecation")
-	public static BasicDBObject generateSampler(SampleEvent event){
+	public static BasicDBObject processSampler(SampleEvent event){
 		//MongoSampler sampler = new MongoSampler();
 		SampleResult sample = event.getResult(); 
 		BasicDBObject basicObject = new BasicDBObject();
