@@ -19,6 +19,7 @@
 package utils;
 
 import com.mongodb.BasicDBObject;
+import listener.MongoDBListener;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jmeter.assertions.AssertionResult;
@@ -26,6 +27,7 @@ import org.apache.jmeter.samplers.SampleEvent;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jorphan.logging.LoggingManager;
 import org.apache.log.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.CharArrayWriter;
@@ -38,8 +40,7 @@ import java.util.List;
  */
 // For unit tests, @see TestCSVSaveService
 public final class MongoResultUtil {
-    private static final Logger logger = LoggingManager.getLoggerForClass();
-
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MongoResultUtil.class);
     /*
      * Class to handle generating the delimited string. - adds the delimiter
      * if not the first call - quotes any strings that require it
@@ -152,7 +153,7 @@ public final class MongoResultUtil {
             text.append(event.getVarValue(i));
         }
         if(logger.isDebugEnabled()){
-        	logger.debug(text.toString());
+            logger.debug(text.toString());
         }
         return text.toString();
     }
