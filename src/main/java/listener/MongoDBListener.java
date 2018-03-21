@@ -91,13 +91,13 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
 	}
 
 	private String getMongoHost(){
-	    return getPropertyAsString("mongo_host");
+	    return getPropertyAsString(ExtraValues.MONGO_HOST);
     }
     private String getTestCaseName(){
-	    return getPropertyAsString("test_case");
+	    return getPropertyAsString(ExtraValues.TEST_CASE);
     }
 
     private int getMongoPort(){
-        return getPropertyAsInt("mongo_port");
+        return getPropertyAsInt(ExtraValues.MONGO_PORT);
     }
 }

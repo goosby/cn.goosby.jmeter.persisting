@@ -98,7 +98,7 @@ public class MongoDBListenerGui extends AbstractListenerGui implements Clearable
 	private JPanel createMongoPortPanel(){
 		JLabel label = new JLabel("mongodb port: ");
 		mogodbPort = new JTextField();
-		mogodbPort.setName("Mongo_ports");
+		mogodbPort.setName("mongodb_port");
 		label.setLabelFor(mogodbPort);
 		JPanel testcasePanel = new JPanel(new BorderLayout());
 		testcasePanel.add(label, BorderLayout.WEST);
