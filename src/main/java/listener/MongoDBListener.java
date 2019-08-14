@@ -68,7 +68,7 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
             String dataBaseName = getDataBaseName();
             if (StringUtils.isNotBlank(mongoHost) && mongoPort > 0) {
                 logger.info("MongoDB address is: {} ", mongoHost + ":" + mongoPort);
-                List<MongoCredential> credentialList = new ArrayList();
+                List<MongoCredential> credentialList = new ArrayList<MongoCredential>();
                 if (StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(passWord) && StringUtils.isNotBlank(dataBaseName)) {
                     char[] passwords = passWord.toCharArray();
                     MongoCredential credential = MongoCredential.createMongoCRCredential(userName, dataBaseName, passwords);
@@ -81,7 +81,7 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
                 } else {
                     mongoClient = new MongoClient(address, getConfOptions());
                 }
-                mongoDB = mongoClient.getDB(ExtraValues.DATABASE_NAME);
+                mongoDB = mongoClient.getDB(dataBaseName);
                 collection = mongoDB.getCollection(getTestCaseName() + "_" + currentTime);
             } else {
                 logger.warn("MongoHost address is null, samplers will not persisting");
@@ -105,23 +105,28 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
     }
 
     private static MongoClientOptions getConfOptions() {
+        MongoClientOptions.Builder builder = new MongoClientOptions.Builder();
+        // 每个地址最大请求数
+        builder.connectionsPerHost(30);
+        //一个socket最大的等待请求数
+        builder.threadsAllowedToBlockForConnectionMultiplier(50);
+        // 长链接的最大等待时间
+        builder.maxWaitTime(1000 * 60 * 2);
+        // 链接超时时间
+        builder.connectTimeout(5000);
+        // read数据超时时间
+        builder.socketTimeout(5000);
+        builder.alwaysUseMBeans(false);
+        // 是否重试机制
+        builder.autoConnectRetry(false);
+        // 最近优先策略
+        builder.readPreference(ReadPreference.primary());
         // 是否保持长链接
-        return new MongoClientOptions.Builder().socketKeepAlive(true)
-                // 链接超时时间
-                .connectTimeout(5000)
-                // read数据超时时间
-                .socketTimeout(5000)
-                // 最近优先策略
-                .readPreference(ReadPreference.primary())
-                // 是否重试机制
-                .autoConnectRetry(false)
-                // 每个地址最大请求数
-                .connectionsPerHost(30)
-                // 长链接的最大等待时间
-                .maxWaitTime(1000 * 60 * 2)
-                //一个socket最大的等待请求数
-                .threadsAllowedToBlockForConnectionMultiplier(50)
-                .writeConcern(WriteConcern.NORMAL).build();
+        builder.socketKeepAlive(true);
+        builder.writeConcern(WriteConcern.NORMAL);
+        MongoClientOptions mongoClientOptions = builder.build();
+
+        return mongoClientOptions;
     }
 
     private String getMongoHost() {
@@ -149,7 +154,7 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
         if (StringUtils.isBlank(dataBase)) {
             dataBase = ExtraValues.DATABASE_NAME;
         }
-        logger.info("Data base name is: {}" ,dataBase);
+        logger.info("Data base name is: {}", dataBase);
         return dataBase;
     }
 
@@ -158,7 +163,7 @@ public class MongoDBListener extends AbstractTestElement implements Serializable
         if (StringUtils.isBlank(testCaseName)) {
             testCaseName = ExtraValues.TEST_CASE_NAME;
         }
-        logger.info("Test case name is: {}" ,testCaseName);
+        logger.info("Test case name is: {}", testCaseName);
         return testCaseName;
     }
 }
