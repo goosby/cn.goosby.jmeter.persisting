@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.goosby</groupId>
-    <artifactId>jmeter-samplers-persisting</artifactId>
-    <version>1.0.0</version>
+    <artifactId>samplers-persisting-mongo</artifactId>
+    <version>1.0.6</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.apache.jmeter.version>3.3</org.apache.jmeter.version>
+        <org.apache.jmeter.version>3.1</org.apache.jmeter.version>
     </properties>
 
     <dependencies>
@@ -21,5 +21,16 @@
             <version>${org.apache.jmeter.version}</version>
         </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
