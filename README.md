@@ -33,7 +33,7 @@ jmeter界面中个字段的说明。
 12. rf:ResultFileName
 13. sc:SampleCount
 14. hn:Hostname
-15. sl:SampleLabel
+15. sl:SampleLabel - 标签名
 16. sf:Successful
 17. tn:ThreadName - 线程名字
 18. t:Time
