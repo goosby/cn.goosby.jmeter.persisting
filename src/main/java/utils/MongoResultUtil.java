@@ -359,37 +359,9 @@ public final class MongoResultUtil {
         for (int i = 0; i < SampleEvent.getVarCount(); i++) {
         	buffer.append(event.getVarValue(i));
         }
-        
+        //是否成功
+        basicObject.put("s",sample.isSuccessful());
 		basicObject.put("vv", buffer.toString());
-	    /*
-	    sampler.setDataType(sample.getDataType());
-	    sampler.setAllThreads(sample.getAllThreads());
-	    sampler.setBytes(sample.getBytes());
-	    sampler.setConnectTime(sample.getConnectTime());
-	    sampler.setDataEncodingWithDefault(sample.getDataEncodingNoDefault());
-	    sampler.setErrorCount(sample.getErrorCount());
-	    sampler.setGroupThreads(sample.getGroupThreads());
-	    sampler.setIdleTime(sample.getIdleTime());
-	    sampler.setLatency(sample.getLatency());
-	    sampler.setResponseCode(sample.getResponseCode());
-	    sampler.setResponseMessage(sample.getResponseMessage());
-	    sampler.setResultFileName(sample.getResultFileName());
-	    sampler.setSampleCount(sample.getSampleCount());
-	    sampler.setUrl(sample.getURL());
-	    sampler.setHostname(event.getHostname());
-	    sampler.setSampleLabel(sample.getSampleLabel());
-	    sampler.setSuccessful(sample.isSuccessful());
-	    sampler.setThreadName(sample.getThreadName());
-	    sampler.setTime(sample.getTime());
-	    sampler.setTimestamp(sample.getTimeStamp());
-	    
-        if (message != null) {
-        	sampler.setAssertionResult(message);
-        } else {
-        	sampler.setAssertionResult(""); 
-        }
-        sampler.setVarValue(buffer.toString());*/
-        
 	    return basicObject;
 	}
 	
